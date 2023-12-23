@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { accessToken, requestToken } from "../services/twitterRequestToken.js";
+import { AppDataSource } from "../data-source.js";
+import { Users } from "../entity/User.js";
+import { encrypt } from "../utils/encryption.js";
 
 export const twitterAuthURL = async (req: Request, res: Response) => {
   try {
@@ -18,21 +21,31 @@ export const twitterAuthURL = async (req: Request, res: Response) => {
 
 export const oAuthAccessToken = async (req: Request, res: Response) => {
   try {
+    const email = res["email"];
     const oauth_token = req.query ? (req.query.oauth_token as string) : null;
     const oauth_verifier = req.query
       ? (req.query.oauth_verifier as string)
       : null;
-    const access_token = await accessToken(oauth_token, oauth_verifier);
-    const access_token_obj = {
-      oauth_token: access_token.get("oauth_token"),
-      oauth_token_secret: access_token.get("oauth_token_secret"),
-      user_id: access_token.get("user_id"),
-      screen_name: access_token.get("screen_name"),
-    };
 
-    console.log(access_token);
-    res.send(access_token_obj);
+    const access_token = await accessToken(oauth_token, oauth_verifier);
+
+    const encrypted_oauth_token = await encrypt(
+      access_token.get("oauth_token")
+    );
+    const encrypted_oauth_token_secret = await encrypt(
+      access_token.get("oauth_token_secret")
+    );
+
+    const user = await AppDataSource.manager.findOne(Users, {
+      where: { email },
+    });
+    if (user) {
+      user.twitter_oauth_token = encrypted_oauth_token;
+      user.twitter_oauth_token_secret = encrypted_oauth_token_secret;
+      await AppDataSource.manager.save(user);
+    }
+    res.send(user);
   } catch (error) {
-    res.send(error);
+    throw new Error(error);
   }
 };

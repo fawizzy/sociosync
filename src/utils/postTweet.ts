@@ -5,10 +5,10 @@ const endpointURL = `https://api.twitter.com/2/tweets`;
 interface tweetData {
   text: string;
 }
-async function getRequest(
+export const postTweetService = async (
   { oauth_token, oauth_token_secret }: any,
   data: tweetData
-) {
+) => {
   const token = {
     key: oauth_token,
     secret: oauth_token_secret,
@@ -39,4 +39,4 @@ async function getRequest(
   } else {
     throw new Error("Unsuccessful request");
   }
-}
+};

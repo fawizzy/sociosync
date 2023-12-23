@@ -1,5 +1,7 @@
 import got from "got";
 import { oauth } from "../utils/oauth";
+import { AppDataSource } from "../data-source";
+import { Users } from "../entity/User";
 
 export const requestToken = async (requestTokenURL: string) => {
   const authHeader = oauth.toHeader(
@@ -27,22 +29,41 @@ export const requestToken = async (requestTokenURL: string) => {
 };
 
 export const accessToken = async (oauth_token: string, verifier: string) => {
-  const accessTokenURL = "https://api.twitter.com/oauth/access_token";
-  const authHeader = oauth.toHeader(
-    oauth.authorize({
-      url: accessTokenURL,
-      method: "POST",
-    })
-  );
-  const path = `https://api.twitter.com/oauth/access_token?oauth_verifier=${verifier}&oauth_token=${oauth_token}`;
-  const req = await got.post(path, {
-    headers: {
-      Authorization: authHeader["Authorization"],
-    },
+  try {
+    const accessTokenURL = "https://api.twitter.com/oauth/access_token";
+    const authHeader = oauth.toHeader(
+      oauth.authorize({
+        url: accessTokenURL,
+        method: "POST",
+      })
+    );
+    const path = `https://api.twitter.com/oauth/access_token?oauth_verifier=${verifier}&oauth_token=${oauth_token}`;
+    const req = await got.post(path, {
+      headers: {
+        Authorization: authHeader["Authorization"],
+      },
+    });
+    if (req.body) {
+      return new URLSearchParams(req.body);
+    } else {
+      throw new Error("Cannot get an OAuth request token");
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const accessTokenFromDb = async (email: string) => {
+  const user = await AppDataSource.manager.findOne(Users, {
+    where: { email },
   });
-  if (req.body) {
-    return new URLSearchParams(req.body);
-  } else {
-    throw new Error("Cannot get an OAuth request token");
+  if (user) {
+    const oauth_token = user.twitter_oauth_token;
+    const oauth_token_secret = user.twitter_oauth_token_secret;
+
+    return {
+      oauth_token,
+      oauth_token_secret,
+    };
   }
 };

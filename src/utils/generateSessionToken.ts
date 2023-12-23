@@ -4,7 +4,7 @@ dotenv.config();
 
 interface UserData {
   email: string;
-  password: string;
+  hashed_password: string;
   // Add any other user-related information you want to include in the token
 }
 

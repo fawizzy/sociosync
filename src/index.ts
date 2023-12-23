@@ -6,6 +6,9 @@ import { errorHandler } from "./utils/errorHandler";
 import "reflect-metadata";
 import { scheduler } from "./utils/scheduler";
 import { scheduleTweetRoute } from "./routes/scheduleTweetRoute";
+import { decrypt, encrypt } from "./utils/encryption";
+import { authRoute } from "./routes/authRoute";
+import { accessTokenFromDb } from "./services/twitterRequestToken";
 
 const app = express();
 const port = 5000;
@@ -21,9 +24,10 @@ AppDataSource.initialize()
 
 app.use(errorHandler);
 
-app.use("/v1", twitterAuthRoute);
+app.use(twitterAuthRoute);
 app.use("/v1", userRoute);
 app.use("/v1", scheduleTweetRoute);
+app.use("/v1", authRoute);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
