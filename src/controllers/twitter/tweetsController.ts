@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { scheduler } from "../utils/scheduler";
-import { storeTweets } from "../services/tweetServices";
-import { postTweetService } from "../services/tweetServices";
-import { accessTokenFromDb } from "../services/twitterRequestToken";
+import { scheduler } from "../../utils/scheduler";
+import { storeTweets } from "../../services/twitter/tweetServices";
+import { postTweetService } from "../../services/twitter/tweetServices";
+import { accessTokenFromDb } from "../../services/twitter/twitterRequestToken";
 
 export const scheduleTweet = (
   req: Request,
@@ -11,7 +11,7 @@ export const scheduleTweet = (
 ) => {
   try {
     const { name } = req.body;
-    scheduler(name);
+    // scheduler(name);
     res.send("scheduled");
   } catch (error) {}
 };

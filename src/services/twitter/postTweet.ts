@@ -1,4 +1,4 @@
-import { oauth } from "./oauth";
+import { oauth } from "../../utils/oauth";
 import got from "got";
 const endpointURL = `https://api.twitter.com/2/tweets`;
 

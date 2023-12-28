@@ -1,7 +1,7 @@
 import got from "got";
-import { oauth } from "../utils/oauth";
-import { AppDataSource } from "../data-source";
-import { Users } from "../entity/User";
+import { oauth } from "../../utils/oauth";
+import { AppDataSource } from "../../data-source";
+import { Users } from "../../entity/User";
 
 export const requestToken = async (requestTokenURL: string) => {
   const authHeader = oauth.toHeader(
@@ -46,7 +46,7 @@ export const accessToken = async (oauth_token: string, verifier: string) => {
     if (req.body) {
       return new URLSearchParams(req.body);
     } else {
-      throw new Error("Cannot get an OAuth request token");
+      throw new Error("Cannot get an OAuth access token");
     }
   } catch (error) {
     throw new Error(error);

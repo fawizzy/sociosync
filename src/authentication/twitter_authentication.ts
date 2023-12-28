@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { accessToken, requestToken } from "../services/twitterRequestToken.js";
+import {
+  accessToken,
+  requestToken,
+} from "../services/twitter/twitterRequestToken.js";
 import { AppDataSource } from "../data-source.js";
 import { Users } from "../entity/User.js";
 import { encrypt } from "../utils/encryption.js";

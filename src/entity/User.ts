@@ -22,4 +22,7 @@ export class Users {
 
   @Column({ type: "varchar", nullable: true })
   twitter_oauth_token_secret: string;
+
+  @Column({ type: "varchar", nullable: true })
+  linkedin_access_token: string;
 }

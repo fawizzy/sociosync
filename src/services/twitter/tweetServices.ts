@@ -1,7 +1,7 @@
-import { AppDataSource } from "../data-source";
-import { Tweets, Users } from "../entity";
-import { decrypt } from "../utils/encryption";
-import { oauth } from "../utils/oauth";
+import { AppDataSource } from "../../data-source";
+import { Tweets, Users } from "../../entity";
+import { decrypt } from "../../utils/encryption";
+import { oauth } from "../../utils/oauth";
 import got from "got";
 
 export const storeTweets = async ({ text, email }) => {
@@ -47,7 +47,8 @@ export const postTweetService = async (
       token
     )
   );
-  const req = await got.post(endpointURL, {
+
+  const options = {
     json: data,
     responseType: "json",
     headers: {
@@ -56,7 +57,8 @@ export const postTweetService = async (
       "content-type": "application/json",
       accept: "application/json",
     },
-  });
+  };
+  const req = await got.post(endpointURL, options);
   if (req.body) {
     console.log(req.body);
     return req.body;
